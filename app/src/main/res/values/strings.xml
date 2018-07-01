@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="most_popular">Most Popular</string>
+    <string name="highest_rated">Highest Rated</string>
+    <string name="movie_title">Movie Title</string>
+    <string name="release_date">Release Date</string>
+    <string name="vote_average">Vote Average</string>
+    <string name="synopsis">Synopsis</string>
+    <string name="network_unavilable">Network Unavailable</string>
+    <string name="pref_sort_method_key">SORT_METHOD</string>
+    <string name="pref_sort_vote_avg_desc_key">SORT_VOTE_AVERAGE_DESC</string>
+    <string name="pref_sort_pop_desc_key">SORT_POPULARITY_DESC</string>
+
+    <string name="tmdb_sort_pop_desc">popularity.desc</string>
+    <string name="tmdb_sort_vote_avg_desc">vote_average.desc</string>
+    <string name="parcel_movie">PARCEL_MOVIE</string>
+    <string name="poster_description">Movie Poster</string>
+</resources>
