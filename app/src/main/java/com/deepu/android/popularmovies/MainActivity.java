@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String getSortMethod() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
         return prefs.getString(getString(R.string.pref_sort_method_key),
                 getString(R.string.tmdb_sort_pop_desc));
     }
