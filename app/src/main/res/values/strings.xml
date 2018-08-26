@@ -2,7 +2,10 @@
     <string name="app_name">Popular Movies</string>
     <string name="most_popular">Most Popular</string>
     <string name="highest_rated">Highest Rated</string>
+    <string name="favorites">Favorites</string>
     <string name="movie_title">Movie Title</string>
+    <string name="trailer_title">Trailers</string>
+    <string name="reviews_title">Reviews</string>
     <string name="release_date">Release Date</string>
     <string name="vote_average">Vote Average</string>
     <string name="synopsis">Synopsis</string>
@@ -13,6 +16,9 @@
 
     <string name="tmdb_sort_pop_desc">popular</string>
     <string name="tmdb_sort_vote_avg_desc">top_rated</string>
+    <string name="tmdb_sort_fav_desc">favorites</string>
     <string name="parcel_movie">PARCEL_MOVIE</string>
     <string name="poster_description">Movie Poster</string>
+    <string name="favorite">favorite</string>
+    <string name="unfavorite">unfavorite</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.deepu.android.popularmovies;
+package com.deepu.android.popularmovies.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -9,16 +9,22 @@ public class Movie implements Parcelable {
     private String synopsis;
     private Double voteAverage;
     private String releaseDate;
+    private int movieId;
+    private byte[] dbPosterImage;
 
-    private Movie(Parcel parcel){
+    private Movie(Parcel parcel) {
         title = parcel.readString();
         imageURL = parcel.readString();
         synopsis = parcel.readString();
         voteAverage = (Double) parcel.readValue(Double.class.getClassLoader());
         releaseDate = parcel.readString();
+        movieId = parcel.readInt();
+        dbPosterImage = new byte[parcel.readInt()];
+        parcel.readByteArray(dbPosterImage);
     }
 
-    public Movie(){}
+    public Movie() {
+    }
 
     public String getTitle() {
         return title;
@@ -31,7 +37,7 @@ public class Movie implements Parcelable {
     public String getImageURL() {
         final String TMDB_POSTER_BASE_URL = "https://image.tmdb.org/t/p/w185";
 
-        return TMDB_POSTER_BASE_URL+ imageURL;
+        return TMDB_POSTER_BASE_URL + imageURL;
     }
 
     public void setImageURL(String imageURL) {
@@ -50,7 +56,7 @@ public class Movie implements Parcelable {
         return voteAverage;
     }
 
-    public String getRating(){
+    public String getRating() {
         return String.valueOf(getVoteAverage()) + "/10";
     }
 
@@ -66,6 +72,14 @@ public class Movie implements Parcelable {
         this.releaseDate = releaseDate;
     }
 
+    public int getMovieId() {
+        return movieId;
+    }
+
+    public void setMovieId(int movieId) {
+        this.movieId = movieId;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -78,7 +92,11 @@ public class Movie implements Parcelable {
         parcel.writeString(synopsis);
         parcel.writeValue(voteAverage);
         parcel.writeString(releaseDate);
+        parcel.writeInt(movieId);
+        parcel.writeInt(dbPosterImage.length);
+        parcel.writeByteArray(dbPosterImage);
     }
+
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
         @Override
         public Movie createFromParcel(Parcel parcel) {
@@ -90,4 +108,12 @@ public class Movie implements Parcelable {
             return new Movie[i];
         }
     };
+
+    public byte[] getDbPosterImage() {
+        return dbPosterImage;
+    }
+
+    public void setDbPosterImage(byte[] dbPosterImage) {
+        this.dbPosterImage = dbPosterImage;
+    }
 }
