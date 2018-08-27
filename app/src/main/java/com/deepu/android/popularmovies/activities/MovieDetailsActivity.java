@@ -3,12 +3,14 @@ package com.deepu.android.popularmovies.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +38,15 @@ public class MovieDetailsActivity extends AppCompatActivity {
     Button favoriteButton;
     TextView trailersHeading;
     TextView reviewsHeading;
+    LinearLayoutManager trailerLayoutManager;
+    LinearLayoutManager reviewLayoutManager;
+    ScrollView detailsScrollView;
+
+
+    Parcelable trailerState;
+    Parcelable reviewState;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +63,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         favoriteButton = (Button) findViewById(R.id.favorite_button);
         trailersHeading = findViewById(R.id.trailer_heading);
         reviewsHeading = findViewById(R.id.review_heading);
+        detailsScrollView = findViewById(R.id.details_scrollview);
         title.setText(currentMovie.getTitle());
 
         ImageUtils.setImageView(currentMovie, poster);
@@ -60,6 +72,36 @@ public class MovieDetailsActivity extends AppCompatActivity {
         voteAverage.setText(currentMovie.getRating());
         releaseDate.setText(currentMovie.getReleaseDate());
         getOtherItems(currentMovie);
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        trailerState = trailerLayoutManager.onSaveInstanceState();
+        outState.putParcelable("trailerState", trailerState);
+        reviewState = reviewLayoutManager.onSaveInstanceState();
+        outState.putParcelable("reviewState", reviewState);
+        outState.putIntArray("SCROLL_POSITION",
+                new int[]{ detailsScrollView.getScrollX(), detailsScrollView.getScrollY()});
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if(savedInstanceState != null){
+            trailerState = savedInstanceState.getParcelable("trailerState");
+            reviewState = savedInstanceState.getParcelable("reviewState");
+            trailerLayoutManager.onRestoreInstanceState(trailerState);
+            reviewLayoutManager.onRestoreInstanceState(reviewState);
+            final int[] position = savedInstanceState.getIntArray("SCROLL_POSITION");
+            if(position != null)
+                detailsScrollView.post(new Runnable() {
+                    public void run() {
+                        detailsScrollView.scrollTo(position[0], position[1]);
+                    }
+                });
+        }
 
     }
 
@@ -82,8 +124,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         if (isInternetAvailable(this)) {
             final RecyclerView reviewsView = findViewById(R.id.reviews_recycler_view);
-            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-            reviewsView.setLayoutManager(layoutManager);
+            reviewLayoutManager = new LinearLayoutManager(this);
+            reviewsView.setLayoutManager(reviewLayoutManager);
+            reviewsView.setNestedScrollingEnabled(false);
             String apiKey = BuildConfig.ApiKey;
             OnReviewTaskCompleted reviewTaskCompleted = new OnReviewTaskCompleted() {
                 @Override
@@ -104,14 +147,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private void getTrailers(int movieId, final Context context) {
         if (isInternetAvailable(this)) {
             final RecyclerView trailersView = findViewById(R.id.trailers_recycler_view);
-            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-            trailersView.setLayoutManager(layoutManager);
-
+            trailerLayoutManager = new LinearLayoutManager(this);
+            trailersView.setLayoutManager(trailerLayoutManager);
+            trailersView.setNestedScrollingEnabled(false);
             String apiKey = BuildConfig.ApiKey;
             OnTrailerTaskCompleted trailerTaskCompleted = new OnTrailerTaskCompleted() {
                 @Override
                 public void onSearchTrailersTaskCompleted(Trailer[] trailers) {
-                    if(trailers.length ==0){
+                    if(trailers.length == 0){
                         trailersHeading.setVisibility(View.GONE);
                     }
                     trailersView.setAdapter(new TrailerAdapter(trailers,context));

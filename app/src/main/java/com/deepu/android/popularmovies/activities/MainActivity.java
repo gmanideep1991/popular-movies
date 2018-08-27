@@ -5,22 +5,23 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import com.deepu.android.popularmovies.BuildConfig;
 import com.deepu.android.popularmovies.R;
-import com.deepu.android.popularmovies.adapters.MovieAdapter;
+import com.deepu.android.popularmovies.adapters.MoviesAdapter;
 import com.deepu.android.popularmovies.data.Movie;
 import com.deepu.android.popularmovies.data.MovieContract;
 import com.deepu.android.popularmovies.tasks.GetMoviesAsyncTask;
@@ -32,24 +33,35 @@ import java.util.ArrayList;
 import static com.deepu.android.popularmovies.utils.NetworkUtils.isInternetAvailable;
 
 public class MainActivity extends AppCompatActivity {
-
-    private GridView gridView;
+    RecyclerView moviesView;
+    LinearLayoutManager movieLayoutManager;
     private Movie[] movies;
+    private Parcelable movieListState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        gridView = findViewById(R.id.movie_grid);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                Movie movie = (Movie) parent.getItemAtPosition(position);
-                launchDetailActivity(movie);
-            }
-        });
+        moviesView = findViewById(R.id.movies_recycler_view);
+        movieLayoutManager = new GridLayoutManager(this, 4);
+        moviesView.setLayoutManager(movieLayoutManager);
         populateMovies();
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        movieListState = movieLayoutManager.onSaveInstanceState();
+        state.putParcelable("movieState", movieListState);
+    }
+    @Override
+    protected void onRestoreInstanceState(Bundle state) {
+        super.onRestoreInstanceState(state);
+        if(state != null){
+            movieListState = state.getParcelable("movieState");
+        }
     }
 
     @Override
@@ -87,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
             OnTaskCompleted taskCompleted = new OnTaskCompleted() {
                 @Override
                 public void onSearchMoviesTaskCompleted(Movie[] movies) {
-                    gridView.setAdapter(new MovieAdapter(getApplicationContext(), movies));
+                    moviesView.setAdapter(new MoviesAdapter( movies,getApplicationContext()));
                 }
             };
             GetMoviesAsyncTask getMoviesTask = new GetMoviesAsyncTask(apiKey, taskCompleted);
@@ -192,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         movies = moviesDBArray.toArray(new Movie[moviesDBArray.size()]);
-        gridView.setAdapter(new MovieAdapter(getApplicationContext(), movies));
+        moviesView.setAdapter(new MoviesAdapter( movies,getApplicationContext()));
 
     }
 

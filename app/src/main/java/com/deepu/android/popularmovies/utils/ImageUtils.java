@@ -15,7 +15,7 @@ import java.io.ByteArrayOutputStream;
 public class ImageUtils {
 
     public static void setImageView(final Movie movie, final ImageView imageView) {
-        byte[] byteArray = movie.getDbPosterImage();
+       byte[] byteArray = movie.getDbPosterImage();
         if (byteArray == null) {
             Picasso.get()
                     .load(movie.getImageURL())

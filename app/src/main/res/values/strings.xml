@@ -18,6 +18,7 @@
     <string name="tmdb_sort_vote_avg_desc">top_rated</string>
     <string name="tmdb_sort_fav_desc">favorites</string>
     <string name="parcel_movie">PARCEL_MOVIE</string>
+    <string name="movies">MOVIES</string>
     <string name="poster_description">Movie Poster</string>
     <string name="favorite">favorite</string>
     <string name="unfavorite">unfavorite</string>
