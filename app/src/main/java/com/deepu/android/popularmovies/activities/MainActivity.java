@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             updateSharedPrefs(getString(R.string.tmdb_sort_fav_desc));
             getFavoriteMovies();
-            Toast.makeText(this, getString(R.string.network_unavilable)+"Switching to favorites.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.switch_to_favorites), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -183,7 +183,6 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayList<Movie> moviesDBArray = new ArrayList<Movie>();
         while (cursor.moveToNext()) {
-
             // Get movie data from cursor
             String movieId = LoaderUtils.getStringFromCursor(cursor,
                     MovieContract.MovieEntry.MOVIE_ID);
@@ -211,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
     private void handleNoFavoriteMoviesSelected() {
         updateSharedPrefs(getString(R.string.tmdb_sort_pop_desc));
         getMovies(getSortMethod());
-        Toast.makeText(this, "No favorite movies selected. Default to popular.", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getString(R.string.switch_to_popular), Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -222,8 +221,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void populateMovies(){
         if (getSortMethod().equals(getString(R.string.tmdb_sort_fav_desc))) {
+            updateSharedPrefs(getString(R.string.tmdb_sort_fav_desc));
             getFavoriteMovies();
         } else {
+            updateSharedPrefs(getSortMethod());
             getMovies(getSortMethod());
         }
     }

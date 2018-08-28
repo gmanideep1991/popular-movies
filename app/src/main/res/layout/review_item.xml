@@ -7,12 +7,14 @@
         android:id="@+id/review_author"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/details"/>
+        style="@style/review_author"/>
 
     <TextView
         android:id="@+id/review_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/details"/>
+        style="@style/review_details"/>
+
+
 
 </LinearLayout>

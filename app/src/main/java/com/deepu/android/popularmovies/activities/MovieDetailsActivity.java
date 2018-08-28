@@ -1,34 +1,18 @@
 package com.deepu.android.popularmovies.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.deepu.android.popularmovies.BuildConfig;
 import com.deepu.android.popularmovies.R;
-import com.deepu.android.popularmovies.adapters.ReviewAdapter;
-import com.deepu.android.popularmovies.adapters.TrailerAdapter;
 import com.deepu.android.popularmovies.data.Movie;
-import com.deepu.android.popularmovies.data.Review;
-import com.deepu.android.popularmovies.data.Trailer;
-import com.deepu.android.popularmovies.tasks.GetReviewsAsyncTask;
-import com.deepu.android.popularmovies.tasks.GetTrailersAsyncTask;
-import com.deepu.android.popularmovies.tasks.OnReviewTaskCompleted;
-import com.deepu.android.popularmovies.tasks.OnTrailerTaskCompleted;
 import com.deepu.android.popularmovies.utils.FavoriteUtils;
 import com.deepu.android.popularmovies.utils.ImageUtils;
-
-import static com.deepu.android.popularmovies.utils.NetworkUtils.isInternetAvailable;
 
 public class MovieDetailsActivity extends AppCompatActivity {
 
@@ -36,17 +20,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private Movie currentMovie;
     ImageView poster;
     Button favoriteButton;
-    TextView trailersHeading;
-    TextView reviewsHeading;
-    LinearLayoutManager trailerLayoutManager;
-    LinearLayoutManager reviewLayoutManager;
-    ScrollView detailsScrollView;
-
-
-    Parcelable trailerState;
-    Parcelable reviewState;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +34,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
         TextView voteAverage = findViewById(R.id.vote_average);
         TextView synopsis = findViewById(R.id.synopsis);
         favoriteButton = (Button) findViewById(R.id.favorite_button);
-        trailersHeading = findViewById(R.id.trailer_heading);
-        reviewsHeading = findViewById(R.id.review_heading);
-        detailsScrollView = findViewById(R.id.details_scrollview);
         title.setText(currentMovie.getTitle());
 
         ImageUtils.setImageView(currentMovie, poster);
@@ -78,31 +48,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        trailerState = trailerLayoutManager.onSaveInstanceState();
-        outState.putParcelable("trailerState", trailerState);
-        reviewState = reviewLayoutManager.onSaveInstanceState();
-        outState.putParcelable("reviewState", reviewState);
-        outState.putIntArray("SCROLL_POSITION",
-                new int[]{ detailsScrollView.getScrollX(), detailsScrollView.getScrollY()});
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if(savedInstanceState != null){
-            trailerState = savedInstanceState.getParcelable("trailerState");
-            reviewState = savedInstanceState.getParcelable("reviewState");
-            trailerLayoutManager.onRestoreInstanceState(trailerState);
-            reviewLayoutManager.onRestoreInstanceState(reviewState);
-            final int[] position = savedInstanceState.getIntArray("SCROLL_POSITION");
-            if(position != null)
-                detailsScrollView.post(new Runnable() {
-                    public void run() {
-                        detailsScrollView.scrollTo(position[0], position[1]);
-                    }
-                });
-        }
-
     }
 
     public void addToFavorites(View view) {
@@ -120,57 +65,21 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private void populateReviews(int movieId) {
-
-        if (isInternetAvailable(this)) {
-            final RecyclerView reviewsView = findViewById(R.id.reviews_recycler_view);
-            reviewLayoutManager = new LinearLayoutManager(this);
-            reviewsView.setLayoutManager(reviewLayoutManager);
-            reviewsView.setNestedScrollingEnabled(false);
-            String apiKey = BuildConfig.ApiKey;
-            OnReviewTaskCompleted reviewTaskCompleted = new OnReviewTaskCompleted() {
-                @Override
-                public void onSearchReviewsTaskCompleted(Review[] reviews) {
-                    if(reviews.length ==0){
-                    reviewsHeading.setVisibility(View.GONE);
-                    }
-                    reviewsView.setAdapter(new ReviewAdapter(reviews));
-                }
-            };
-            GetReviewsAsyncTask getReviewsAsyncTask = new GetReviewsAsyncTask(apiKey, reviewTaskCompleted);
-            getReviewsAsyncTask.execute(Integer.toString(movieId));
-        } else {
-            showMessage(getString(R.string.network_unavilable));
-        }
+    public void showTrailers(View view){
+        Intent intent = new Intent(getApplicationContext(), TrailerActivity.class);
+        intent.putExtra(getResources().getString(R.string.movie_id), currentMovie.getMovieId());
+        startActivity(intent);
     }
 
-    private void getTrailers(int movieId, final Context context) {
-        if (isInternetAvailable(this)) {
-            final RecyclerView trailersView = findViewById(R.id.trailers_recycler_view);
-            trailerLayoutManager = new LinearLayoutManager(this);
-            trailersView.setLayoutManager(trailerLayoutManager);
-            trailersView.setNestedScrollingEnabled(false);
-            String apiKey = BuildConfig.ApiKey;
-            OnTrailerTaskCompleted trailerTaskCompleted = new OnTrailerTaskCompleted() {
-                @Override
-                public void onSearchTrailersTaskCompleted(Trailer[] trailers) {
-                    if(trailers.length == 0){
-                        trailersHeading.setVisibility(View.GONE);
-                    }
-                    trailersView.setAdapter(new TrailerAdapter(trailers,context));
-                }
-            };
-            GetTrailersAsyncTask getTrailersAsyncTask = new GetTrailersAsyncTask(apiKey, trailerTaskCompleted);
-            getTrailersAsyncTask.execute(Integer.toString(movieId));
-        } else {
-            showMessage(getString(R.string.network_unavilable));
-        }
+    public void showReviews(View view){
+        Intent intent = new Intent(getApplicationContext(), ReviewActivity.class);
+        intent.putExtra(getResources().getString(R.string.movie_id), currentMovie.getMovieId());
+        startActivity(intent);
     }
+
 
     private void getOtherItems(Movie movie) {
         isFavoriteMovie = FavoriteUtils.checkIfMovieIsFavorite(this, movie);
-        getTrailers(movie.getMovieId(),this);
-        populateReviews(movie.getMovieId());
         if(isFavoriteMovie){
            favoriteButton.setText(R.string.unfavorite);
         }

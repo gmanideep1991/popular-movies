@@ -17,27 +17,83 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <include layout="@layout/movie_details" />
+            <ImageView
+                android:id="@+id/poster"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:paddingTop="20dp"
+                android:contentDescription="@string/poster_description" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/favorite"
+                android:padding="20dp"
+                android:onClick="addToFavorites"
+                android:id="@+id/favorite_button"/>
 
             <TextView
-                android:id="@+id/trailer_heading"
-                android:text="@string/trailer_title"
+                android:id="@+id/title_heading"
+                android:text="@string/movie_title"
                 style="@style/header" />
-
-            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/trailers_recycler_view"
-                android:layout_height="match_parent"
-                android:layout_width="match_parent" />
 
             <TextView
-                android:id="@+id/review_heading"
-                android:text="@string/reviews_title"
+                android:id="@+id/movie_title"
+                style="@style/details" />
+
+            <TextView
+                android:id="@+id/release_date_heading"
+                android:text="@string/release_date"
                 style="@style/header" />
 
-            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/reviews_recycler_view"
-                android:layout_height="match_parent"
-                android:layout_width="match_parent" />
+            <TextView
+                android:id="@+id/release_date"
+                style="@style/details" />
+
+            <TextView
+                android:id="@+id/vote_heading"
+                android:text="@string/vote_average"
+                style="@style/header" />
+
+            <TextView
+                android:id="@+id/vote_average"
+                style="@style/details" />
+
+            <TextView
+                android:id="@+id/synopsis_header"
+                android:text="@string/synopsis"
+                style="@style/header" />
+
+            <TextView
+                android:id="@+id/synopsis"
+                style="@style/details" />
+
+            <LinearLayout
+                android:id="@+id/buttonLayout"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:gravity="center">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/show_trailers"
+                    android:padding="20dp"
+                    android:onClick="showTrailers"
+                    android:id="@+id/trailers_button"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/show_reviews"
+                    android:padding="20dp"
+                    android:onClick="showReviews"
+                    android:id="@+id/reviews_button"/>
+            </LinearLayout>
         </LinearLayout>
 
     </ScrollView>

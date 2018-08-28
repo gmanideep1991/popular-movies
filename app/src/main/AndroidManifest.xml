@@ -20,12 +20,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.MovieDetailsActivity"></activity>
+        <activity android:name=".activities.MovieDetailsActivity" />
 
         <provider
+            android:name=".data.MovieContentProvider"
             android:authorities="com.deepu.android.popularmovies"
-            android:name="com.deepu.android.popularmovies.data.MovieContentProvider"
             android:exported="false" />
+
+        <activity android:name=".activities.TrailerActivity" />
+        <activity android:name=".activities.ReviewActivity"></activity>
     </application>
 
 </manifest>

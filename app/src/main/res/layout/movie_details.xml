@@ -5,58 +5,6 @@
     android:layout_height="match_parent"
     android:id="@+id/movie_detail">
 
-    <ImageView
-        android:id="@+id/poster"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:paddingTop="20dp"
-        android:contentDescription="@string/poster_description" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/favorite"
-        android:padding="20dp"
-        android:onClick="addToFavorites"
-        android:id="@+id/favorite_button"/>
-
-    <TextView
-        android:id="@+id/title_heading"
-        android:text="@string/movie_title"
-        style="@style/header" />
-
-    <TextView
-        android:id="@+id/movie_title"
-        style="@style/details" />
-
-    <TextView
-        android:id="@+id/release_date_heading"
-        android:text="@string/release_date"
-        style="@style/header" />
-
-    <TextView
-        android:id="@+id/release_date"
-        style="@style/details" />
-
-    <TextView
-        android:id="@+id/vote_heading"
-        android:text="@string/vote_average"
-        style="@style/header" />
-
-    <TextView
-        android:id="@+id/vote_average"
-        style="@style/details" />
-
-    <TextView
-        android:id="@+id/synopsis_header"
-        android:text="@string/synopsis"
-        style="@style/header" />
-
-    <TextView
-        android:id="@+id/synopsis"
-        style="@style/details" />
 
 </LinearLayout>
