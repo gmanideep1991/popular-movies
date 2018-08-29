@@ -37,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
     LinearLayoutManager movieLayoutManager;
     private Movie[] movies;
     private Parcelable movieListState;
+    private static Bundle mBundleState;
+    private int mPosition = RecyclerView.NO_POSITION;
+    private final String RECYCLER_POSITION_KEY = "recycler_position";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,22 +49,48 @@ public class MainActivity extends AppCompatActivity {
         moviesView = findViewById(R.id.movies_recycler_view);
         movieLayoutManager = new GridLayoutManager(this, 4);
         moviesView.setLayoutManager(movieLayoutManager);
-        populateMovies();
+        if(savedInstanceState == null){
+            populateMovies();
+        }
+
+        else{
+            Parcelable[] parcelables = savedInstanceState.getParcelableArray(getString(R.string.movies));
+            if(parcelables !=null){
+               // Movie[] movies = new Movie[parcelables.length];
+                movies = new Movie[parcelables.length];
+                for(int i =0; i< parcelables.length ;i++){
+                    movies[i] = (Movie) parcelables[i];
+                }
+            }
+            moviesView.setAdapter(new MoviesAdapter( movies,getApplicationContext()));
+
+        }
 
     }
 
     @Override
     protected void onSaveInstanceState(Bundle state) {
-        super.onSaveInstanceState(state);
+        state.putParcelableArray(getString(R.string.movies), movies);
         movieListState = movieLayoutManager.onSaveInstanceState();
         state.putParcelable("movieState", movieListState);
+        state.putInt(RECYCLER_POSITION_KEY,  movieLayoutManager.findFirstCompletelyVisibleItemPosition());
+        super.onSaveInstanceState(state);
+
     }
     @Override
     protected void onRestoreInstanceState(Bundle state) {
-        super.onRestoreInstanceState(state);
+        if (state.containsKey(RECYCLER_POSITION_KEY)) {
+            mPosition = state.getInt(RECYCLER_POSITION_KEY);
+            if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
+            // Scroll the RecyclerView to mPosition
+            moviesView.scrollToPosition(mPosition);
+        }
         if(state != null){
             movieListState = state.getParcelable("movieState");
         }
+
+        super.onRestoreInstanceState(state);
+
     }
 
     @Override
@@ -99,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
             OnTaskCompleted taskCompleted = new OnTaskCompleted() {
                 @Override
                 public void onSearchMoviesTaskCompleted(Movie[] movies) {
-                    moviesView.setAdapter(new MoviesAdapter( movies,getApplicationContext()));
+                    updateReycleView(movies);
+
                 }
             };
             GetMoviesAsyncTask getMoviesTask = new GetMoviesAsyncTask(apiKey, taskCompleted);
@@ -109,6 +139,11 @@ public class MainActivity extends AppCompatActivity {
             getFavoriteMovies();
             Toast.makeText(this, getString(R.string.switch_to_favorites), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void updateReycleView(Movie[] movies) {
+        this.movies = movies;
+        moviesView.setAdapter(new MoviesAdapter( movies,getApplicationContext()));
     }
 
     private String getSortMethod() {
@@ -216,7 +251,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        populateMovies();
+        if (mBundleState != null) {
+            mPosition = mBundleState.getInt(RECYCLER_POSITION_KEY);
+            if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
+            moviesView.scrollToPosition(mPosition);
+        }
+        //populateMovies();
     }
 
     private void populateMovies(){
@@ -227,5 +267,13 @@ public class MainActivity extends AppCompatActivity {
             updateSharedPrefs(getSortMethod());
             getMovies(getSortMethod());
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mBundleState = new Bundle();
+        mPosition = movieLayoutManager.findFirstCompletelyVisibleItemPosition();
+        mBundleState.putInt(RECYCLER_POSITION_KEY, mPosition);
     }
 }

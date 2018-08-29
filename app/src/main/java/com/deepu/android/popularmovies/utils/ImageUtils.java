@@ -25,7 +25,7 @@ public class ImageUtils {
                         public void onSuccess() {
                             Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
                             byte[] imageInByte = stream.toByteArray();
                             movie.setDbPosterImage(stream.toByteArray());
                         }
